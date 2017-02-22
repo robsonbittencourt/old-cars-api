@@ -1,0 +1,1 @@
+web:    java -cp "target/dependency/*":target/classes app.tools.examples.Main
