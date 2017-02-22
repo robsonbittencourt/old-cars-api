@@ -7,8 +7,25 @@ jdk:
 install:
   - mvn clean package
 
+addons:
+  apt:
+    packages:
+      - xml2  
+
 after_success:
   - mvn clean cobertura:cobertura-integration-test coveralls:report -DrepoToken="$COVERALLS_TOKEN"
+
+   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+      docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
+
+      export VERSION=`xml2 < pom.xml  | grep /project/version= | sed 's/.*=//'`
+    
+      docker build -t robsonbittencourt/old-cars-api-2:latest -t robsonbittencourt/old-cars-api-2:${VERSION} . ;
+    
+      docker push docker.io/robsonbittencourt/old-cars-api-2:latest ;
+
+      docker push docker.io/robsonbittencourt/old-cars-api-2:${VERSION} ;
+    fi
 
 cache:
   directories:
