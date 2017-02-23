@@ -12,10 +12,13 @@ addons:
     packages:
       - xml2  
 
+services:
+  - docker
+
 after_success:
   - mvn clean cobertura:cobertura-integration-test coveralls:report -DrepoToken="$COVERALLS_TOKEN"
 
-   - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+  - if [[ "$TRAVIS_BRANCH" == "master" ]]; then
       docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD" ;
 
       export VERSION=`xml2 < pom.xml  | grep /project/version= | sed 's/.*=//'`
